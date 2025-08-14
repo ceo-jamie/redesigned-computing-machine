@@ -20,8 +20,13 @@ const QUERY = groq`*[_type == "product" && slug.current == $slug][0]{
   _id, title, price, images, description, "slug": slug.current
 }`;
 
-export default async function ProductPage({ params }: { params: { slug: string } }) {
-  const product: Product | null = await sanityClient.fetch(QUERY, { slug: params.slug });
+export default async function ProductPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params; // ✅ Next 15 expects params as a Promise
+  const product: Product | null = await sanityClient.fetch(QUERY, { slug });
 
   if (!product) {
     return (
